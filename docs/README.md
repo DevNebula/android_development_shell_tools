@@ -453,6 +453,10 @@ source <(curl -Ls https://github.com/AdrianDC/android_development_shell_tools/ra
   * [**gitraos** *<b>\[Add sonyxperiadev origin remote\]</b>*](https://github.com/AdrianDC/android_development_shell_tools/blob/master/android_git_remotes.rc)
 
 ---
+### [&nbsp;Documentation: [android_git_search.rc](https://github.com/AdrianDC/android_development_shell_tools/blob/master/android_git_search.rc)&nbsp;]
+  * [**gitfindmatches** *<b>\[Find git sources matches within subpath\]</b>*](https://github.com/AdrianDC/android_development_shell_tools/blob/master/android_git_search.rc) : *gitfindmatches &lt;reference_commit&gt; &lt;sources_subpath&gt;*
+
+---
 ### [&nbsp;Documentation: [android_git_stats.rc](https://github.com/AdrianDC/android_development_shell_tools/blob/master/android_git_stats.rc)&nbsp;]
   * [**gitstat** *<b>\[Git history with remote comparator\]</b>*](https://github.com/AdrianDC/android_development_shell_tools/blob/master/android_git_stats.rc) : *gitstat &lt;remote&gt; &lt;branch&gt; [stats_only]*
   * [**gitst** *(Alias)*](https://github.com/AdrianDC/android_development_shell_tools/blob/master/android_git_stats.rc) : *gitremoteverify origin gitrao && gitstat origin cm-14.1*

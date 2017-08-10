@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+# Copyright 2015-2017 Adrian DC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# === Git Find Sources Matches ===
+function gitfindmatches()
+{
+  # Usage
+  if [ -z "${1}" ] || [ ! -d "${2}" ]; then
+    echo '';
+    echo ' Usage: gitfindmatches <reference_commit> <sources_subpath> (Find git sources matches within subpath)';
+    echo '';
+    return;
+  fi;
+
+  # Variables
+  local reference=${1};
+  local subpath=${2};
+  local find_changes='';
+  local find_deletions='';
+  local find_insertions='';
+  local find_sha1='';
+  local line;
+  local line_changes;
+  local line_deletions;
+  local line_insertions;
+
+  # Search related commits
+  echo '';
+  echo -e " \e[1;37mgitfindmatches: Searching commits from '${subpath}' in ${reference} tree...\e[0m";
+  echo '';
+  for sha1 in $(git log --format=format:%H "${reference}" -- "${subpath}"); do
+
+    # Parse differences with HEAD subpath
+    line=$(git diff --shortstat HEAD "${sha1}" -- "${subpath}");
+    line=${line# };
+    line_changes=${line%% *};
+    line=${line#*, };
+    line_insertions=${line%% *};
+    line=${line#*, };
+    line_deletions=${line%% *};
+
+    # Initialize first diff
+    if [ -z "${find_changes}" ]; then
+      find_sha1=${sha1};
+      find_changes=${line_changes};
+      find_insertions=${line_insertions};
+      find_deletions=${line_deletions};
+      find_sha1=${sha1};
+    fi;
+
+    # Check if commit is closer to HEAD subpath
+    #if [ "${line_changes}" -lt "${find_changes}" ] && [ "${line_insertions}" -lt "${find_insertions}" ] && [ "${line_deletions}" -lt "${find_deletions}" ]; then
+    if [ $((${line_insertions} + ${line_deletions})) -lt $((${find_insertions} + ${find_deletions})) ]; then
+      find_changes=${line_changes};
+      find_insertions=${line_insertions};
+      find_deletions=${line_deletions};
+      find_sha1=${sha1};
+    fi;
+
+  done;
+
+  # Show closest match
+  echo -e ' \e[1;37mgitfindmatches: Closes match :\e[0m';
+  echo -e "  \e[1;37m- Trees:\e[0m ${find_sha1}";
+  echo -e "  \e[1;37m- Files:\e[0m ${find_changes} files different";
+  echo -e "  \e[1;37m- Diffs:\e[0m ${find_insertions} insertions, ${find_deletions} deletions";
+  echo '';
+}
